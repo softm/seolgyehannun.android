@@ -9,3 +9,6 @@ app/build/
 *.jks
 *.keystore
 service-account.json
+
+# Device captures may contain private data; only reviewed listing images are committed.
+store/captures/

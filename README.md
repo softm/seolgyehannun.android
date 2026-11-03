@@ -32,3 +32,11 @@ gradle :app:assembleDebug
 - `ANDROID_KEYSTORE_PASSWORD`
 - `ANDROID_KEY_ALIAS`
 - `ANDROID_KEY_PASSWORD`
+
+## Play 등록자료
+
+- [2026-11-03 거부 대응 및 재심사 절차](docs/PLAY-RESUBMISSION-20261103.md)
+- [512px 스토어 아이콘](store/ko-KR/icon-512.png)
+- 검증: `python tools/store_assets.py --check`
+- 실제 기기 캡처: `python tools/capture_phone.py --help`
+- 스크린샷과 release 설치 검증은 아직 필요하며, 재심사는 소유자 승인 후에만 제출합니다.
