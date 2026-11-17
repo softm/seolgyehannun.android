@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
+  <rect width="1024" height="500" fill="#F7FAF9"/>
+  <circle cx="920" cy="62" r="190" fill="#ABEFE8" opacity=".28"/>
+  <circle cx="80" cy="500" r="240" fill="#004541" opacity=".08"/>
+  <rect x="86" y="68" width="120" height="120" rx="32" fill="#004541"/>
+  <g transform="translate(86 68) scale(3)">
+    <path d="M10.5 13.5 18.7 9.5l10.8 5.3v11l-9.4 4.7-9.6-4.9V13.5Z" fill="#ABEFE8"/>
+    <path d="m10.5 13.5 9.6 4.7 9.4-3.4m-9.4 3.4v12.3" fill="none" stroke="#004541" stroke-width="2.1" stroke-linejoin="round"/>
+    <circle cx="20.1" cy="18.2" r="2.2" fill="#F8F9FF" stroke="#004541" stroke-width="1.4"/>
+  </g>
+  <text x="242" y="147" font-family="Apple SD Gothic Neo, sans-serif" font-size="62" font-weight="800" fill="#004541">설계한눈</text>
+  <text x="88" y="280" font-family="Apple SD Gothic Neo, sans-serif" font-size="44" font-weight="800" fill="#0A1A2F">필지에서 허가·접수·마감까지</text>
+  <text x="90" y="343" font-family="Apple SD Gothic Neo, sans-serif" font-size="29" fill="#516174">인허가 일정 · 보완 · 문서를 한 업무 공간에서</text>
+  <rect x="90" y="392" width="280" height="64" rx="32" fill="#004541"/>
+  <text x="230" y="434" text-anchor="middle" font-family="Apple SD Gothic Neo, sans-serif" font-size="25" font-weight="700" fill="#FFFFFF">인허가 업무관리</text>
+</svg>
