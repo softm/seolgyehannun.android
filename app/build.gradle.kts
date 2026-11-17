@@ -11,8 +11,8 @@ android {
         applicationId = "net.softm.seolgyehannun"
         minSdk = 24
         targetSdk = 36
-        versionCode = providers.gradleProperty("PLAY_VERSION_CODE").orElse("3").get().toInt()
-        versionName = "1.0.2"
+        versionCode = providers.gradleProperty("PLAY_VERSION_CODE").orElse("4").get().toInt()
+        versionName = "1.0.3"
 
         val appUrl = providers.gradleProperty("SEOLGYEHANNUN_WEB_URL")
             .orElse("https://seolgyehannun.designboard.net/")
@@ -62,9 +62,8 @@ kotlin {
 
 dependencies {
     implementation("com.github.softm:hannun-in-app-update-android:1.0.0")
+    implementation("com.github.softm:hannun-admob-android:1.0.5")
     implementation("androidx.activity:activity-ktx:1.12.1")
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.fragment:fragment-ktx:1.8.9")
-    implementation("com.google.android.gms:play-services-ads:25.5.0")
-    implementation("com.google.android.ump:user-messaging-platform:4.0.0")
 }
