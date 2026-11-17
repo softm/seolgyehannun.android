@@ -11,6 +11,7 @@ import android.webkit.GeolocationPermissions
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
@@ -19,11 +20,13 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import softm.hannun.update.HannunInAppUpdateManager
 
 class MainActivity : ComponentActivity() {
     private lateinit var webView: WebView
     private lateinit var progress: ProgressBar
     private lateinit var ads: CommonNativeAds
+    private lateinit var appUpdater: HannunInAppUpdateManager
     private var pendingGeoOrigin: String? = null
     private var pendingGeoCallback: GeolocationPermissions.Callback? = null
 
@@ -40,6 +43,7 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        appUpdater = HannunInAppUpdateManager(this, null)
         setContentView(R.layout.activity_main)
 
         webView = findViewById(R.id.webView)
@@ -66,6 +70,10 @@ class MainActivity : ComponentActivity() {
                     "tel", "mailto", "geo", "kakaomap", "nmap", "tmap", "intent" -> openExternal(uri)
                     else -> false
                 }
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                view?.settings?.cacheMode = WebSettings.LOAD_DEFAULT
             }
         }
 
@@ -114,10 +122,15 @@ class MainActivity : ComponentActivity() {
             }
         })
 
-        if (savedInstanceState == null) webView.loadUrl(BuildConfig.WEB_URL)
+        if (savedInstanceState == null) loadHomeFresh()
         else webView.restoreState(savedInstanceState)
         ads = CommonNativeAds(this, findViewById<LinearLayout>(R.id.adHost))
         ads.start()
+    }
+
+    private fun loadHomeFresh() {
+        webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
+        webView.loadUrl(BuildConfig.WEB_URL, mapOf("Cache-Control" to "no-cache"))
     }
 
     private fun openExternal(uri: Uri): Boolean {
@@ -134,7 +147,23 @@ class MainActivity : ComponentActivity() {
         super.onSaveInstanceState(outState)
     }
 
+    override fun onResume() {
+        super.onResume()
+        appUpdater.onResume()
+    }
+
+    override fun onPause() {
+        appUpdater.onPause()
+        super.onPause()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (appUpdater.onActivityResult(requestCode, resultCode)) return
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
     override fun onDestroy() {
+        appUpdater.destroy()
         if (::ads.isInitialized) ads.destroy()
         webView.destroy()
         super.onDestroy()
