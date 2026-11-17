@@ -11,11 +11,14 @@ import android.webkit.GeolocationPermissions
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceError
+import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import android.widget.LinearLayout
+import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,6 +28,8 @@ import softm.hannun.update.HannunInAppUpdateManager
 class MainActivity : ComponentActivity() {
     private lateinit var webView: WebView
     private lateinit var progress: ProgressBar
+    private lateinit var offlinePanel: View
+    private var mainFrameFailed = false
     private lateinit var ads: CommonNativeAds
     private lateinit var appUpdater: HannunInAppUpdateManager
     private var pendingGeoOrigin: String? = null
@@ -48,6 +53,8 @@ class MainActivity : ComponentActivity() {
 
         webView = findViewById(R.id.webView)
         progress = findViewById(R.id.progress)
+        offlinePanel = findViewById(R.id.offlinePanel)
+        findViewById<Button>(R.id.retryButton).setOnClickListener { retryWebPage() }
 
         with(webView.settings) {
             javaScriptEnabled = true
@@ -62,6 +69,12 @@ class MainActivity : ComponentActivity() {
         }
 
         webView.webViewClient = object : WebViewClient() {
+            override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
+                mainFrameFailed = false
+                offlinePanel.visibility = View.GONE
+                progress.visibility = View.VISIBLE
+            }
+
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                 val uri = request?.url ?: return false
                 val scheme = uri.scheme?.lowercase()
@@ -74,6 +87,15 @@ class MainActivity : ComponentActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 view?.settings?.cacheMode = WebSettings.LOAD_DEFAULT
+                if (!mainFrameFailed) offlinePanel.visibility = View.GONE
+            }
+
+            override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
+                if (request?.isForMainFrame == true) showNetworkError()
+            }
+
+            override fun onReceivedHttpError(view: WebView?, request: WebResourceRequest?, response: WebResourceResponse?) {
+                if (request?.isForMainFrame == true && (response?.statusCode ?: 0) >= 400) showNetworkError()
             }
         }
 
@@ -133,6 +155,20 @@ class MainActivity : ComponentActivity() {
         webView.loadUrl(BuildConfig.WEB_URL, mapOf("Cache-Control" to "no-cache"))
     }
 
+    private fun showNetworkError() {
+        mainFrameFailed = true
+        progress.visibility = View.GONE
+        offlinePanel.visibility = View.VISIBLE
+    }
+
+    private fun retryWebPage() {
+        mainFrameFailed = false
+        offlinePanel.visibility = View.GONE
+        progress.visibility = View.VISIBLE
+        webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
+        webView.loadUrl(webView.url ?: BuildConfig.WEB_URL, mapOf("Cache-Control" to "no-cache"))
+    }
+
     private fun openExternal(uri: Uri): Boolean {
         return try {
             startActivity(Intent(Intent.ACTION_VIEW, uri))
@@ -150,9 +186,11 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         appUpdater.onResume()
+        if (::ads.isInitialized) ads.onResume()
     }
 
     override fun onPause() {
+        if (::ads.isInitialized) ads.onPause()
         appUpdater.onPause()
         super.onPause()
     }
