@@ -21,6 +21,43 @@
         android:layout_height="3dp"
         android:layout_gravity="top"
         android:max="100" />
+
+    <LinearLayout
+        android:id="@+id/offlinePanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFDF9"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="서비스에 연결할 수 없습니다"
+            android:textColor="#172033"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="네트워크 연결을 확인한 뒤 다시 시도해 주세요.\n저장된 앱 데이터와 로그인 정보는 삭제되지 않습니다."
+            android:textColor="#5C667A"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/retryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
+            android:minWidth="120dp"
+            android:text="다시 시도" />
+    </LinearLayout>
     </FrameLayout>
 
     <LinearLayout
