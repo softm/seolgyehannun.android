@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "net.softm.seolgyehannun"
-        minSdk = 26
+        minSdk = 24
         targetSdk = 36
         versionCode = providers.gradleProperty("PLAY_VERSION_CODE").orElse("2").get().toInt()
         versionName = "1.0.1"
@@ -61,6 +61,7 @@ kotlin {
 }
 
 dependencies {
+    implementation("com.github.softm:hannun-in-app-update-android:1.0.0")
     implementation("androidx.activity:activity-ktx:1.12.1")
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.fragment:fragment-ktx:1.8.9")
