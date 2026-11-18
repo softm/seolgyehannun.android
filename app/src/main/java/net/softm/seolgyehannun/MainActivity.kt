@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.View
 import android.webkit.GeolocationPermissions
 import android.webkit.PermissionRequest
@@ -29,7 +30,11 @@ class MainActivity : ComponentActivity() {
     private lateinit var webView: WebView
     private lateinit var progress: ProgressBar
     private lateinit var offlinePanel: View
+    private lateinit var landingPanel: View
     private var mainFrameFailed = false
+    private var firstContentShown = false
+    private var loadGeneration = 0
+    private var firstLoadStartedAt = 0L
     private lateinit var ads: CommonNativeAds
     private lateinit var appUpdater: HannunInAppUpdateManager
     private var pendingGeoOrigin: String? = null
@@ -54,6 +59,7 @@ class MainActivity : ComponentActivity() {
         webView = findViewById(R.id.webView)
         progress = findViewById(R.id.progress)
         offlinePanel = findViewById(R.id.offlinePanel)
+        landingPanel = findViewById(R.id.landingPanel)
         findViewById<Button>(R.id.retryButton).setOnClickListener { retryWebPage() }
 
         with(webView.settings) {
@@ -71,7 +77,13 @@ class MainActivity : ComponentActivity() {
         webView.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
                 mainFrameFailed = false
+                loadGeneration += 1
+                if (!firstContentShown) firstLoadStartedAt = SystemClock.uptimeMillis()
                 offlinePanel.visibility = View.GONE
+                if (!firstContentShown) {
+                    landingPanel.visibility = View.VISIBLE
+                    webView.visibility = View.INVISIBLE
+                }
                 progress.visibility = View.VISIBLE
             }
 
@@ -87,7 +99,9 @@ class MainActivity : ComponentActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 view?.settings?.cacheMode = WebSettings.LOAD_DEFAULT
-                if (!mainFrameFailed) offlinePanel.visibility = View.GONE
+                if (mainFrameFailed) return
+                offlinePanel.visibility = View.GONE
+                waitForFirstContent(loadGeneration, 0)
             }
 
             override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
@@ -157,16 +171,44 @@ class MainActivity : ComponentActivity() {
 
     private fun showNetworkError() {
         mainFrameFailed = true
+        loadGeneration += 1
         progress.visibility = View.GONE
+        landingPanel.visibility = View.GONE
+        webView.visibility = View.INVISIBLE
         offlinePanel.visibility = View.VISIBLE
     }
 
     private fun retryWebPage() {
         mainFrameFailed = false
         offlinePanel.visibility = View.GONE
+        if (!firstContentShown) landingPanel.visibility = View.VISIBLE
+        webView.visibility = if (firstContentShown) View.VISIBLE else View.INVISIBLE
         progress.visibility = View.VISIBLE
         webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
         webView.loadUrl(webView.url ?: BuildConfig.WEB_URL, mapOf("Cache-Control" to "no-cache"))
+    }
+
+    private fun waitForFirstContent(generation: Int, attempt: Int) {
+        if (firstContentShown || mainFrameFailed || generation != loadGeneration) return
+        webView.evaluateJavascript(
+            "(function(){var b=document.body;if(!b)return false;" +
+                "return b.innerText.trim().length>0&&b.getBoundingClientRect().height>0;})()"
+        ) { value ->
+            if (firstContentShown || mainFrameFailed || generation != loadGeneration) return@evaluateJavascript
+            val minimumLandingShown = SystemClock.uptimeMillis() - firstLoadStartedAt >= 600
+            if (value == "true" && minimumLandingShown) {
+                firstContentShown = true
+                landingPanel.visibility = View.GONE
+                offlinePanel.visibility = View.GONE
+                webView.visibility = View.VISIBLE
+                return@evaluateJavascript
+            }
+            if (attempt >= 60) {
+                showNetworkError()
+                return@evaluateJavascript
+            }
+            webView.postDelayed({ waitForFirstContent(generation, attempt + 1) }, 250)
+        }
     }
 
     private fun openExternal(uri: Uri): Boolean {
