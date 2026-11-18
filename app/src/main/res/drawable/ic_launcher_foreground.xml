@@ -1,12 +1,21 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <!-- Clipboard matches the Play listing. All artwork stays in the adaptive safe zone. -->
-    <path android:fillColor="#FEFDF4" android:pathData="M37.6875,38.53125H70.453125V69.609375H37.6875Z"/>
-    <path android:fillColor="#F4B842" android:pathData="M43.59375,33.609375H64.546875V42.890625H43.59375Z"/>
-    <path android:fillColor="#666666" android:pathData="M43.03125,49.359375H65.109375V49.640625H43.03125Z"/>
-    <path android:fillColor="#666666" android:pathData="M43.03125,55.828125H65.109375V56.109375H43.03125Z"/>
-    <path android:fillColor="#666666" android:pathData="M43.03125,62.296875H56.953125V62.578125H43.03125Z"/>
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <!-- Keep the launcher artwork aligned with the approved 설계한눈 store icon. -->
+    <path
+        android:fillColor="#ABEFE8"
+        android:pathData="M10.5,13.5L18.7,9.5L29.5,14.8V25.8L20.1,30.5L10.5,25.6Z" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M10.5,13.5L20.1,18.2L29.5,14.8M20.1,18.2V30.5"
+        android:strokeColor="#004541"
+        android:strokeLineJoin="round"
+        android:strokeWidth="2.1" />
+    <path
+        android:fillColor="#F8F9FF"
+        android:pathData="M20.1,16A2.2,2.2 0,1 0,20.1 20.4A2.2,2.2 0,1 0,20.1 16"
+        android:strokeColor="#004541"
+        android:strokeWidth="1.4" />
 </vector>
