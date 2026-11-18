@@ -12,7 +12,51 @@
     <WebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:id="@+id/landingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F3F8F7"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="28dp">
+
+        <ImageView
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:contentDescription="@null"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="설계한눈"
+            android:textColor="#004541"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="공간 설계 정보를 준비하고 있어요"
+            android:textColor="#58706D"
+            android:textSize="15sp" />
+
+        <ProgressBar
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="24dp"
+            android:contentDescription="설계한눈 불러오는 중"
+            android:indeterminate="true"
+            android:indeterminateTint="#006A63" />
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progress"
