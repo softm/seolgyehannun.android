@@ -11,8 +11,8 @@ android {
         applicationId = "net.softm.seolgyehannun"
         minSdk = 24
         targetSdk = 36
-        versionCode = providers.gradleProperty("PLAY_VERSION_CODE").orElse("4").get().toInt()
-        versionName = "1.0.3"
+        versionCode = providers.gradleProperty("PLAY_VERSION_CODE").orElse("5").get().toInt()
+        versionName = "1.0.4"
 
         val appUrl = providers.gradleProperty("SEOLGYEHANNUN_WEB_URL")
             .orElse("https://seolgyehannun.designboard.net/")
